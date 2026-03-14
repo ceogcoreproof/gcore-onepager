@@ -11,6 +11,7 @@
             --cyan: #00ffff;
             --cyan-dim: rgba(0, 255, 255, 0.2);
             --orange-industrial: #ff8c00;
+            --orange-electric: #ffb800;
             --black: #050505;
         }
 
@@ -115,6 +116,7 @@
             color: var(--orange-industrial);
             margin: 5px 0;
             display: block;
+            min-width: 120px;
         }
 
         .metric-item .desc {
@@ -144,18 +146,25 @@
             box-shadow: 0 0 30px var(--cyan);
         }
 
+        /* BOTÓN HOW CON HALO ANARANJADO */
         .btn-secondary {
             background: transparent;
-            border: 1px solid var(--cyan-dim);
-            color: var(--cyan);
+            border: 1px solid var(--orange-industrial);
+            color: var(--orange-industrial);
             padding: 12px 30px;
             font-family: 'JetBrains Mono', monospace;
             cursor: pointer;
             transition: all 0.3s ease;
-            opacity: 0.7;
+            opacity: 0.8;
+            box-shadow: 0 0 5px var(--orange-industrial);
         }
 
-        .btn-secondary:hover { border-color: var(--cyan); opacity: 1; }
+        .btn-secondary:hover {
+            border-color: var(--orange-electric);
+            color: var(--orange-electric);
+            opacity: 1;
+            box-shadow: 0 0 20px rgba(255, 184, 0, 0.8), 0 0 40px rgba(255, 140, 0, 0.4);
+        }
 
         /* MODAL BRIEF CANVAS */
         .modal {
@@ -228,17 +237,17 @@
             <aside class="metrics-panel">
                 <div class="metric-item">
                     <span class="label">CAPEX_PROTECTION</span>
-                    <span class="value">15-22%</span>
+                    <span class="value decrypt-metric" data-text="15-22%">15-22%</span>
                     <span class="desc">Reduction in unpredicted rework.</span>
                 </div>
                 <div class="metric-item">
                     <span class="label">OPEX_SAVINGS</span>
-                    <span class="value">30%</span>
+                    <span class="value decrypt-metric" data-text="30%">30%</span>
                     <span class="desc">Direct maintenance efficiency.</span>
                 </div>
                 <div class="metric-item">
                     <span class="label">ROI_INCIDENCE</span>
-                    <span class="value">4.5x</span>
+                    <span class="value decrypt-metric" data-text="4.5x">4.5x</span>
                     <span class="desc">Investment recovery (12 months).</span>
                 </div>
             </aside>
@@ -279,33 +288,39 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script>
-        // --- 1. MATRIX DECRYPT ANIMATION ---
-        const decryptElement = document.querySelector('.decrypt');
-        const originalText = decryptElement.getAttribute('data-text');
+        // --- 1. MATRIX DECRYPT ANIMATION (Unificado) ---
         const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789<>[]{}/_';
-        let iteration = 0;
-        let interval = null;
+        const metricChars = '0123456789%.-xX';
 
-        function startDecrypt() {
-            clearInterval(interval);
-            iteration = 0;
-            interval = setInterval(() => {
-                decryptElement.innerText = originalText.split("")
+        function startDecrypt(element, text, charSet) {
+            let iteration = 0;
+            const interval = setInterval(() => {
+                element.innerText = text.split("")
                     .map((letter, index) => {
-                        if(index < iteration) return originalText[index];
-                        return chars[Math.floor(Math.random() * chars.length)];
+                        if(index < iteration) return text[index];
+                        return charSet[Math.floor(Math.random() * charSet.length)];
                     })
                     .join("");
-                if(iteration >= originalText.length) {
-                    clearInterval(interval);
-                    setTimeout(startDecrypt, 6000); 
-                }
+                if(iteration >= text.length) clearInterval(interval);
                 iteration += 1 / 4;
             }, 30);
         }
-        startDecrypt();
 
-        // --- 2. THREE.JS 3D ENGINE (0,0,0) ---
+        function runAllAnimations() {
+            // Decrypt Título
+            const title = document.querySelector('.decrypt');
+            startDecrypt(title, title.getAttribute('data-text'), chars);
+
+            // Decrypt Métricas
+            document.querySelectorAll('.decrypt-metric').forEach(m => {
+                startDecrypt(m, m.getAttribute('data-text'), metricChars);
+            });
+        }
+
+        runAllAnimations();
+        setInterval(runAllAnimations, 7000); // Bucle cada 7 segundos
+
+        // --- 2. THREE.JS 3D ENGINE ---
         const scene = new THREE.Scene();
         const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
         const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('matrix-background'), alpha: true, antialias: true });
@@ -339,7 +354,7 @@
             renderer.setSize(window.innerWidth, window.innerHeight);
         });
 
-        // --- 3. MODAL LOGIC (HOW?) ---
+        // --- 3. MODAL LOGIC ---
         const modal = document.getElementById('brief-modal');
         const openBtn = document.getElementById('open-brief');
         const closeBtn = document.getElementById('close-modal');
