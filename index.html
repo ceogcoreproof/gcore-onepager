@@ -3,13 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>G-CoreProof | Global Industrial Audit Protocol</title>
+    <title>Predictacore | Industrial Intelligence Mothership</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;700&display=swap');
         :root {
             --cyan: #00ffff;
             --orange: #ff8c00;
             --black: #050505;
+            --ub-color: var(--cyan);
         }
         body, html { margin: 0; padding: 0; background: var(--black); color: var(--cyan); font-family: 'JetBrains Mono', monospace; overflow: hidden; height: 100vh; }
         #matrix-background { position: fixed; top: 0; left: 0; z-index: 1; }
@@ -18,20 +19,21 @@
         .bottom-bar { border-top: 1px solid rgba(0,255,255,0.1); border-bottom: none; }
         .main-layout { display: flex; justify-content: space-between; align-items: center; padding: 0 80px; flex-grow: 1; }
         .hero { max-width: 650px; }
-        .industrial-orange { color: var(--orange); font-size: 2.8rem; text-shadow: 0 0 25px rgba(255,140,0,0.5); margin: 0; font-weight: 700; min-height: 3.2rem; }
+        .mothership-label { font-size: 0.6rem; letter-spacing: 4px; opacity: 0.5; margin-bottom: 5px; color: var(--cyan); }
+        .industrial-title { color: var(--ub-color); font-size: 2.8rem; text-shadow: 0 0 25px rgba(255,140,0,0.4); margin: 0; font-weight: 700; min-height: 3.2rem; transition: color 0.4s ease; }
         .subtitle { font-size: 1.1rem; letter-spacing: 4px; opacity: 0.9; margin-top: 5px; }
         .matrix-text { margin: 30px 0; line-height: 1.8; font-size: 0.85rem; border-left: 2px solid var(--cyan); padding-left: 20px; background: rgba(0,255,255,0.02); }
-        .metrics-panel { display: flex; flex-direction: column; gap: 25px; text-align: right; border-right: 2px solid var(--orange); padding-right: 20px; }
-        .metric-item .label { font-size: 0.65rem; letter-spacing: 2px; opacity: 0.6; }
-        .metric-item .value { font-size: 2.2rem; font-weight: 700; color: var(--orange); margin: 5px 0; display: block; min-width: 120px; }
-        .actions { display: flex; gap: 20px; margin-top: 20px; }
-        .btn-primary { background: transparent; border: 1px solid var(--cyan); color: var(--cyan); padding: 12px 30px; cursor: pointer; font-weight: bold; transition: 0.3s; }
-        .btn-primary:hover { background: var(--cyan); color: var(--black); box-shadow: 0 0 30px var(--cyan); }
-        .btn-secondary { background: transparent; border: 1px solid var(--orange); color: var(--orange); padding: 12px 30px; cursor: pointer; transition: 0.3s; box-shadow: 0 0 5px var(--orange); }
-        .btn-secondary:hover { border-color: #ffb800; color: #ffb800; box-shadow: 0 0 20px rgba(255,184,0,0.8); }
+        .metrics-panel { display: flex; flex-direction: column; gap: 25px; text-align: right; border-right: 2px solid var(--ub-color); padding-right: 20px; transition: border-color 0.4s ease; }
+        .metric-item .label { font-size: 0.65rem; letter-spacing: 2px; opacity: 0.6; color: var(--ub-color); transition: color 0.4s ease; }
+        .metric-item .value { font-size: 2.2rem; font-weight: 700; color: var(--ub-color); margin: 5px 0; display: block; min-width: 120px; transition: color 0.4s ease; }
+        .ub-selector { margin-top: 30px; border-top: 1px solid rgba(0,255,255,0.1); padding-top: 20px; }
+        .actions { display: flex; gap: 15px; margin-top: 15px; }
+        .btn-ub { background: transparent; border: 1px solid var(--cyan); color: var(--cyan); padding: 10px 20px; cursor: pointer; font-size: 0.7rem; font-weight: bold; transition: 0.3s; letter-spacing: 1px; }
+        .btn-ub:hover { background: var(--cyan); color: var(--black); box-shadow: 0 0 20px var(--cyan); }
+        .btn-ub.orange { border-color: var(--orange); color: var(--orange); }
+        .btn-ub.orange:hover { background: var(--orange); color: var(--black); box-shadow: 0 0 20px var(--orange); }
         .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(5,5,5,0.95); backdrop-filter: blur(8px); }
         .modal-content { background: #080808; margin: 10% auto; padding: 40px; border: 1px solid var(--cyan); width: 60%; }
-        .canvas-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
         .close-modal { float: right; cursor: pointer; color: var(--cyan); font-size: 1.5rem; }
         .blink { animation: blinker 1s linear infinite; }
         @keyframes blinker { 50% { opacity: 0; } }
@@ -41,89 +43,112 @@
     <canvas id="matrix-background"></canvas>
     <div class="interface">
         <nav class="top-bar">
-            <div>G-CoreProof <span style="font-size: 0.6rem; opacity: 0.5;">// SOMA_IA & PREDICTCORE</span></div>
-            <div>USA_DELAWARE_NODE // [SECURED]</div>
+            <div>PREDICTACORE // MOTHERSHIP</div>
+            <div>SOMA_IA ENGINE // [CONNECTED]</div>
         </nav>
         <div class="main-layout">
             <main class="hero">
-                <h1 class="industrial-orange" id="main-title" data-text="G-CoreProof">G-CoreProof</h1>
+                <div class="mothership-label">> G-COREPROOF_PROTOCOL:</div>
+                <h1 class="industrial-title" id="main-title" data-text="G-CoreProof">G-CoreProof</h1>
                 <h2 class="subtitle">COORDINATED TO THE (0,0,0)</h2>
                 <div class="matrix-text">
                     // ISO 19650 COMPLIANT (CDE & AIM)<br>
                     // CROSS-SPEC VALIDATION: IEEE | IEC | ASCE 7<br>
                     // ASYNCHRONOUS FORENSIC ANALYSIS
                 </div>
-                <div class="actions">
-                    <button class="btn-primary" onclick="window.location.href='mailto:sales@gcoreproof.com'">REQUEST_INSTANCIA</button>
-                    <button class="btn-secondary" id="open-brief">HOW?</button>
+                <div class="ub-selector">
+                    <p style="font-size: 0.6rem; opacity: 0.5;">> INITIALIZE_BATTLE_UNIT:</p>
+                    <div class="actions">
+                        <button class="btn-ub" onclick="manualTrigger('GenesisCore')">GENESIS_CORE</button>
+                        <button class="btn-ub orange" onclick="manualTrigger('Predictalux')">PREDICTA_LUX</button>
+                        <button class="btn-ub" id="open-brief">HOW?</button>
+                    </div>
                 </div>
             </main>
             <aside class="metrics-panel">
                 <div class="metric-item">
-                    <span class="label">CAPEX_PROTECTION</span>
+                    <span class="label" id="lbl-1">CAPEX_PROTECTION</span>
                     <span class="value" id="capex" data-text="15-22%">15-22%</span>
                 </div>
                 <div class="metric-item">
-                    <span class="label">OPEX_SAVINGS</span>
+                    <span class="label" id="lbl-2">OPEX_SAVINGS</span>
                     <span class="value" id="opex" data-text="30%">30%</span>
                 </div>
                 <div class="metric-item">
-                    <span class="label">ROI_INCIDENCE</span>
+                    <span class="label" id="lbl-3">ROI_INCIDENCE</span>
                     <span class="value" id="roi" data-text="4.5x">4.5x</span>
                 </div>
             </aside>
         </div>
         <footer class="bottom-bar">
-            <div>LOG: CONNECTION_ESTABLISHED... <span style="color:var(--cyan)">OK</span> <span class="blink">_</span></div>
+            <div>RADAR: <span style="color:var(--cyan)">ACTIVE</span> | AUDIT_SERVICE: <span style="color:var(--orange)">SOMA_IA</span> <span class="blink">_</span></div>
             <div>USA_DELAWARE // NODAL_POINT</div>
         </footer>
     </div>
 
     <div id="brief-modal" class="modal">
         <div class="modal-content"><span class="close-modal" id="close-modal">&times;</span>
-            <div class="canvas-grid">
-                <div style="border:1px solid rgba(0,255,255,0.1); padding:10px;"><h3>PROBLEM</h3><p>Data Blindness.</p></div>
-                <div style="border:1px solid rgba(0,255,255,0.1); padding:10px;"><h3>PROCESS</h3><p>Forensic Audit.</p></div>
-                <div style="border:1px solid rgba(0,255,255,0.1); padding:10px;"><h3>OUTCOME</h3><p>ISO 19650.</p></div>
-                <div style="border:1px solid var(--orange); padding:10px;"><h3>VALUE</h3><p>ROI 4.5x.</p></div>
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                <div style="border:1px solid rgba(0,255,255,0.1); padding:15px;"><h3>GenesisCore</h3><p>Factibilidad 30% & Decommissioning.</p></div>
+                <div style="border:1px solid var(--orange); padding:15px;"><h3>Predictalux</h3><p>Cálculo Lumínico IA Normativo.</p></div>
             </div>
         </div>
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script>
-        // --- 1. MOTOR FORENSE ACELERADO (Cascada Rápida) ---
         const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz0123456789';
+        let isUserInteracting = false;
+        let currentUBIndex = 0;
+        const ubList = ["G-CoreProof", "GenesisCore", "Predictalux"];
 
         function decrypt(id, text) {
             return new Promise(resolve => {
                 const el = document.getElementById(id);
                 let iteration = 0;
                 const interval = setInterval(() => {
-                    el.innerText = text.split("").map((letter, index) => {
-                        if(index < iteration) return text[index];
-                        return chars[Math.floor(Math.random() * chars.length)];
-                    }).join("");
-                    if(iteration >= text.length) { clearInterval(interval); resolve(); }
-                    iteration += 0.8; // ACELERADO (Antes 0.3)
-                }, 20); // MÁS RÁPIDO (Antes 30ms)
+                    el.innerText = text.split("").map((l, i) => i < iteration ? text[i] : chars[Math.floor(Math.random()*chars.length)]).join("");
+                    if(iteration >= text.length){ clearInterval(interval); resolve(); }
+                    iteration += 0.8;
+                }, 20);
             });
         }
 
-        async function runSequence() {
-            await decrypt('main-title', "G-CoreProof");
-            await new Promise(r => setTimeout(r, 200)); // PAUSA BREVE
-            await decrypt('capex', "15-22%");
-            await decrypt('opex', "30%");
-            await decrypt('roi', "4.5x");
-        }
-        
-        window.onload = () => {
-            runSequence();
-            setInterval(runSequence, 8000); // LOOP MÁS CORTO (8s)
-        };
+        async function runSequence(unitName) {
+            const ubData = {
+                "G-CoreProof": { capex: "15-22%", opex: "30%", roi: "4.5x", color: "cyan", l1: "CAPEX_PROTECTION", l2: "OPEX_SAVINGS", l3: "ROI_INCIDENCE" },
+                "GenesisCore": { capex: "20-25%", opex: "35%", roi: "5.2x", color: "cyan", l1: "FEASIBILITY_VAL", l2: "DECOMM_RISK", l3: "ASSET_RECOVERY" },
+                "Predictalux": { capex: "40-60%", opex: "100%", roi: "1.2y", color: "orange", l1: "ENERGY_EFFICIENCY", l2: "COMPLIANCE_RATE", l3: "PAYBACK_PERIOD" }
+            };
+            const data = ubData[unitName] || ubData["G-CoreProof"];
+            document.querySelector(':root').style.setProperty('--ub-color', `var(--${data.color})`);
+            
+            document.getElementById('lbl-1').innerText = data.l1;
+            document.getElementById('lbl-2').innerText = data.l2;
+            document.getElementById('lbl-3').innerText = data.l3;
 
-        // --- 2. 3D ENGINE (0,0,0) ---
+            await decrypt('main-title', unitName);
+            await new Promise(r => setTimeout(r, 200));
+            await decrypt('capex', data.capex);
+            await decrypt('opex', data.opex);
+            await decrypt('roi', data.roi);
+        }
+
+        async function startAutoLoop() {
+            if (isUserInteracting) return;
+            await runSequence(ubList[currentUBIndex]);
+            currentUBIndex = (currentUBIndex + 1) % ubList.length;
+            setTimeout(startAutoLoop, 8000);
+        }
+
+        function manualTrigger(name) {
+            isUserInteracting = true;
+            runSequence(name);
+            setTimeout(() => { isUserInteracting = false; startAutoLoop(); }, 20000);
+        }
+
+        window.onload = () => startAutoLoop();
+
         const scene = new THREE.Scene();
         const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
         const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('matrix-background'), alpha: true, antialias: true });
@@ -136,7 +161,6 @@
         function animate() { requestAnimationFrame(animate); cube.rotation.y += 0.003; grid.rotation.y += 0.0005; renderer.render(scene, camera); }
         animate();
 
-        // 3. MODAL
         const m = document.getElementById('brief-modal');
         document.getElementById('open-brief').onclick = () => m.style.display='block';
         document.getElementById('close-modal').onclick = () => m.style.display='none';
