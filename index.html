@@ -3,45 +3,350 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <title>G-CORE PROOF | Sovereign Audit Node</title>
+    <title>G-CoreProof | Global Industrial Audit Protocol</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;700&display=swap');
+
+        :root {
+            --cyan: #00ffff;
+            --cyan-dim: rgba(0, 255, 255, 0.2);
+            --orange-industrial: #ff8c00;
+            --black: #050505;
+        }
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            background-color: var(--black);
+            color: var(--cyan);
+            font-family: 'JetBrains Mono', monospace;
+            overflow: hidden;
+            height: 100vh;
+        }
+
+        #matrix-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1;
+        }
+
+        .interface {
+            position: relative;
+            z-index: 10;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            background: radial-gradient(circle at center, transparent 0%, rgba(5,5,5,0.8) 100%);
+            box-sizing: border-box;
+            border: 1px solid var(--cyan-dim);
+        }
+
+        .top-bar, .bottom-bar {
+            padding: 15px 40px;
+            font-size: 0.7rem;
+            letter-spacing: 2px;
+            background: rgba(0, 255, 255, 0.03);
+            display: flex;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--cyan-dim);
+        }
+
+        .bottom-bar { border-top: 1px solid var(--cyan-dim); border-bottom: none; }
+
+        .main-layout {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 80px;
+            flex-grow: 1;
+        }
+
+        .hero { max-width: 650px; }
+
+        /* TÍTULO NARANJA INDUSTRIAL */
+        .industrial-orange {
+            color: var(--orange-industrial);
+            font-size: 2.8rem;
+            text-shadow: 0 0 25px rgba(255, 140, 0, 0.5);
+            margin: 0;
+            letter-spacing: -1px;
+            font-weight: 700;
+            min-height: 3.2rem;
+        }
+
+        .subtitle {
+            font-size: 1.1rem;
+            letter-spacing: 4px;
+            opacity: 0.9;
+            margin-top: 5px;
+            color: var(--cyan);
+        }
+
+        .matrix-text {
+            margin: 30px 0;
+            line-height: 1.8;
+            font-size: 0.85rem;
+            border-left: 2px solid var(--cyan);
+            padding-left: 20px;
+            background: rgba(0, 255, 255, 0.02);
+        }
+
+        /* METRICS PANEL */
+        .metrics-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+            text-align: right;
+            border-right: 2px solid var(--orange-industrial);
+            padding-right: 20px;
+        }
+
+        .metric-item .label {
+            font-size: 0.65rem;
+            letter-spacing: 2px;
+            opacity: 0.6;
+        }
+
+        .metric-item .value {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: var(--orange-industrial);
+            margin: 5px 0;
+            display: block;
+        }
+
+        .metric-item .desc {
+            font-size: 0.6rem;
+            opacity: 0.5;
+            max-width: 200px;
+        }
+
+        /* BUTTONS */
+        .actions { display: flex; gap: 20px; margin-top: 20px; }
+
+        .btn-primary {
+            background: transparent;
+            border: 1px solid var(--cyan);
+            color: var(--cyan);
+            padding: 12px 30px;
+            font-family: 'JetBrains Mono', monospace;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 10px var(--cyan-dim);
+            font-weight: bold;
+        }
+
+        .btn-primary:hover {
+            background: var(--cyan);
+            color: var(--black);
+            box-shadow: 0 0 30px var(--cyan);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            border: 1px solid var(--cyan-dim);
+            color: var(--cyan);
+            padding: 12px 30px;
+            font-family: 'JetBrains Mono', monospace;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            opacity: 0.7;
+        }
+
+        .btn-secondary:hover { border-color: var(--cyan); opacity: 1; }
+
+        /* MODAL BRIEF CANVAS */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0; top: 0; width: 100%; height: 100%;
+            background-color: rgba(5, 5, 5, 0.95);
+            backdrop-filter: blur(8px);
+        }
+
+        .modal-content {
+            background-color: #080808;
+            margin: 5% auto;
+            padding: 40px;
+            border: 1px solid var(--cyan);
+            width: 80%;
+            max-width: 1000px;
+            box-shadow: 0 0 50px rgba(0, 255, 255, 0.1);
+        }
+
+        .canvas-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .canvas-item { border: 1px solid var(--cyan-dim); padding: 15px; }
+        .canvas-item h3 { font-size: 0.7rem; color: var(--cyan); margin: 0 0 10px 0; }
+        .canvas-item p { font-size: 0.7rem; line-height: 1.5; opacity: 0.7; }
+        .canvas-item.value-card { border-color: var(--orange-industrial); }
+        .canvas-item.value-card h3 { color: var(--orange-industrial); }
+
+        .close-modal { float: right; cursor: pointer; color: var(--cyan); font-size: 1.5rem; }
+
+        .cyan-text { color: var(--cyan); }
+        .blink { animation: blinker 1s linear infinite; }
+        @keyframes blinker { 50% { opacity: 0; } }
+    </style>
 </head>
-<body class="bg-[#060810] text-gray-300 font-mono selection:bg-green-500 selection:text-black">
-    <div class="max-w-4xl mx-auto px-6 py-20">
-        <header class="mb-16 border-b border-green-900/30 pb-8 flex justify-between items-end">
-            <div>
-                <h1 class="text-4xl font-bold text-white tracking-tighter uppercase">G-CORE <span class="text-[#00c896]">PROOF</span></h1>
-                <p class="text-xs mt-2 text-gray-500 uppercase tracking-widest">Status: Node Active // Jurisdiction: Delaware LLC</p>
-            </div>
-            <div class="text-right text-[10px] text-green-800">
-                [AUTH_ENCRYPTED_SESSION]
-            </div>
-        </header>
+<body>
+    <canvas id="matrix-background"></canvas>
 
-        <section class="mb-16">
-            <h2 class="text-xl text-white mb-6 font-semibold">The Reality Noise: Digital Blindness is a Liability.</h2>
-            <p class="leading-relaxed text-lg italic border-l-2 border-[#00c896] pl-6 py-2">
-                "90% of BIM models are <span class="text-red-500 uppercase font-bold">Digital Trash</span>. We audit asset integrity via ephemeral RAM processing. No trace. No risk. Just the forensic truth."
-            </p>
-        </section>
+    <div class="interface">
+        <nav class="top-bar">
+            <div class="brand">G-CoreProof <span style="font-size: 0.6rem; opacity: 0.6;">powered by Predictacore & Soma_IA</span></div>
+            <div class="region">USA_DELAWARE_NODE // [ISO 19650 CERTIFIED]</div>
+        </nav>
 
-        <div class="grid md:grid-cols-2 gap-8 mb-20">
-            <div class="p-8 border border-gray-800 bg-gray-900/10 hover:border-[#00c896]/50 transition-colors">
-                <h3 class="text-[#00c896] mb-3 font-bold uppercase tracking-tighter">Zero-Trace Privacy</h3>
-                <p class="text-sm leading-relaxed text-gray-400">Volatile RAM processing. 3-pass cryptographic wipe post-verdict. We certify data without owning it.</p>
-            </div>
-            <div class="p-8 border border-gray-800 bg-gray-900/10 hover:border-[#00c896]/50 transition-colors">
-                <h3 class="text-[#00c896] mb-3 font-bold uppercase tracking-tighter">Evolution Audit</h3>
-                <p class="text-sm leading-relaxed text-gray-400">Binary fingerprinting (V1 vs V2). Detection of undocumented asset swaps in high-stakes infrastructure.</p>
-            </div>
+        <div class="main-layout">
+            <main class="hero">
+                <p style="font-size: 0.7rem; opacity: 0.6;">> INITIALIZING AUDIT ENGINE...</p>
+                <h1 class="industrial-orange decrypt" data-text="G-CoreProof">G-CoreProof</h1>
+                <h2 class="subtitle">COORDINATED TO THE (0,0,0)</h2>
+                
+                <div class="matrix-text">
+                    // ELIMINATING DATA BLINDNESS<br>
+                    // ISO 19650 COMPLIANT (CDE & AIM)<br>
+                    // CROSS-SPEC VALIDATION: IEEE | IEC | ASCE 7<br>
+                    // ASYNCHRONOUS FORENSIC ANALYSIS
+                </div>
+
+                <div class="actions">
+                    <button class="btn-primary" onclick="window.location.href='mailto:sales@gcoreproof.com'">REQUEST_INSTANCIA</button>
+                    <button class="btn-secondary" id="open-brief">HOW?</button>
+                </div>
+            </main>
+
+            <aside class="metrics-panel">
+                <div class="metric-item">
+                    <span class="label">CAPEX_PROTECTION</span>
+                    <span class="value">15-22%</span>
+                    <span class="desc">Reduction in unpredicted rework.</span>
+                </div>
+                <div class="metric-item">
+                    <span class="label">OPEX_SAVINGS</span>
+                    <span class="value">30%</span>
+                    <span class="desc">Direct maintenance efficiency.</span>
+                </div>
+                <div class="metric-item">
+                    <span class="label">ROI_INCIDENCE</span>
+                    <span class="value">4.5x</span>
+                    <span class="desc">Investment recovery (12 months).</span>
+                </div>
+            </aside>
         </div>
 
-        <footer class="text-center pt-12 border-t border-gray-900">
-            <p class="text-xs uppercase tracking-[0.2em] mb-8 text-gray-600">Access Restricted to Authorized Personnel</p>
-            <a href="mailto:sales@gcoreproof.com" class="inline-block border border-[#00c896] text-[#00c896] px-10 py-4 font-bold uppercase tracking-widest hover:bg-[#00c896] hover:text-black transition-all">
-                Initiate Protocol
-            </a>
+        <footer class="bottom-bar">
+            <div class="system-logs">
+                LOG: CONNECTION_ESTABLISHED... <span class="cyan-text">OK</span> | HASH: 0x7F8E...3A1 <span class="blink">_</span>
+            </div>
+            <div class="standards">USA_DELAWARE // NODAL_POINT</div>
         </footer>
     </div>
+
+    <div id="brief-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" id="close-modal">&times;</span>
+            <h2 style="font-size: 1rem; color: var(--cyan);">G-CoreProof // Strategic Brief</h2>
+            <div class="canvas-grid">
+                <div class="canvas-item">
+                    <h3>01 // THE_PROBLEM</h3>
+                    <p>Data Blindness leads to 15-22% CAPEX rework and hidden OPEX inefficiencies.</p>
+                </div>
+                <div class="canvas-item">
+                    <h3>02 // THE_PROCESS</h3>
+                    <p>Soma_IA Algorithmic Audit using IEEE/IEC/ASCE 7 standards for zero-bias validation.</p>
+                </div>
+                <div class="canvas-item">
+                    <h3>03 // THE_OUTCOME</h3>
+                    <p>Immutable forensic .json Instance. Certified AIM for ISO 19650 compliance.</p>
+                </div>
+                <div class="canvas-item value-card">
+                    <h3>04 // THE_VALUE</h3>
+                    <p>ROI 4.5x. 30% OPEX optimization. Accelerated technical handover and certainty.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script>
+        // --- 1. MATRIX DECRYPT ANIMATION ---
+        const decryptElement = document.querySelector('.decrypt');
+        const originalText = decryptElement.getAttribute('data-text');
+        const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789<>[]{}/_';
+        let iteration = 0;
+        let interval = null;
+
+        function startDecrypt() {
+            clearInterval(interval);
+            iteration = 0;
+            interval = setInterval(() => {
+                decryptElement.innerText = originalText.split("")
+                    .map((letter, index) => {
+                        if(index < iteration) return originalText[index];
+                        return chars[Math.floor(Math.random() * chars.length)];
+                    })
+                    .join("");
+                if(iteration >= originalText.length) {
+                    clearInterval(interval);
+                    setTimeout(startDecrypt, 6000); 
+                }
+                iteration += 1 / 4;
+            }, 30);
+        }
+        startDecrypt();
+
+        // --- 2. THREE.JS 3D ENGINE (0,0,0) ---
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('matrix-background'), alpha: true, antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+
+        const gridHelper = new THREE.GridHelper(100, 40, 0x00ffff, 0x002222);
+        scene.add(gridHelper);
+
+        const geometry = new THREE.BoxGeometry(4, 10, 4);
+        const wireframe = new THREE.WireframeGeometry(geometry);
+        const line = new THREE.LineSegments(wireframe);
+        line.material.color.setHex(0x00ffff);
+        line.material.transparent = true;
+        line.material.opacity = 0.4;
+        scene.add(line);
+
+        camera.position.set(15, 15, 15);
+        camera.lookAt(0, 0, 0);
+
+        function animate() {
+            requestAnimationFrame(animate);
+            line.rotation.y += 0.003;
+            gridHelper.rotation.y += 0.0005;
+            renderer.render(scene, camera);
+        }
+        animate();
+
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        // --- 3. MODAL LOGIC (HOW?) ---
+        const modal = document.getElementById('brief-modal');
+        const openBtn = document.getElementById('open-brief');
+        const closeBtn = document.getElementById('close-modal');
+
+        openBtn.onclick = () => { modal.style.display = 'block'; }
+        closeBtn.onclick = () => { modal.style.display = 'none'; }
+        window.onclick = (e) => { if(e.target == modal) modal.style.display = 'none'; }
+    </script>
 </body>
 </html>
